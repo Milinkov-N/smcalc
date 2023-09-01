@@ -1,0 +1,7 @@
+# VS Code
+.vs/
+.vscode/
+
+# Out files
+build/
+out/

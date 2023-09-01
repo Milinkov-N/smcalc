@@ -171,6 +171,8 @@ Token Lexer::_ident() {
 #endif
 }
 
-void utils::tokens_dbg(const alias::tokens& tokens) {
-  for (auto& tok : tokens) std::cout << tok << "\n";
+void utils::tokens_dbg(alias::tokens& tokens, std::string_view name) {
+  std::cout << name << " {\n";
+  for (auto& tok : tokens) std::cout << "  " << tok << ",\n";
+  std::cout << "}\n\n";
 }

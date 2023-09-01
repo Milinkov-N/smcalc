@@ -2,6 +2,7 @@
 
 #include "args.h"
 #include "lexer.h"
+#include "rpn.h"
 
 size_t bytes_allocated = 0;
 
@@ -12,6 +13,7 @@ constexpr auto USAGE_MSG = R"(Usage: smcalc  <expression> [OPTIONS...]
                             <name>:<value>)
         -B, --show-bytes    Shows how many bytes program is used
         -T, --show-tokens   Shows raw, unparsed tokens
+        -R, --show-rpn      Shows parsed tokens (Reverse Polish Notation)
 )";
 
 void* operator new(size_t size) {
@@ -26,27 +28,29 @@ auto main(int argc, char* argv[]) -> int {
   }
 
   Args args(argc, argv);
-
-  auto vars = args.find_all_variables();
-
   Lexer l(args.expr());
-
-  if (args.find_flag("-T").first || args.find_flag("--show-tokens").first) {
-    std::cout << "raw tokens:\n";
-    utils::tokens_dbg(l.collect());
-  }
+  auto vars = args.find_all_variables();
+  auto raw_tokens = l.collect();
 
   try {
-    auto parsed = utils::parse_variables(vars);
+    auto rpn = rpn::parse(raw_tokens);
+    auto parsed_vars = utils::parse_variables(vars);
 
-    for (auto& v : parsed)
-      std::cout << v.first << " = " << v.second << std::endl;
+    if (args.find_flag("-T").first || args.find_flag("--show-tokens").first)
+      utils::tokens_dbg(raw_tokens, "Raw Tokens");
+
+    if (args.find_flag("-R").first || args.find_flag("--show-rpn").first)
+      utils::tokens_dbg(rpn, "Parsed Tokens");
+
+    std::cout << "Variables:\n";
+    for (auto& v : parsed_vars)
+      std::cout << "  " << v.first << " = " << v.second << std::endl;
   } catch (std::logic_error& e) {
     std::cerr << e.what() << std::endl;
     return 1;
   }
 
   if (args.find_flag("-B").first || args.find_flag("--show-bytes").first)
-    std::cout << "\n\n\nBytes used: " << bytes_allocated << std::endl;
+    std::cout << "\n\nBytes used: " << bytes_allocated << std::endl;
   return 0;
 }

@@ -3,6 +3,9 @@ set(CMAKE_CXX_STANDARD 17)
 
 project(smcalc)
 
+### Uncomment to see how much more memory getting used
+### without utilizing string_view
+# add_compile_definitions(_UNOPTIMIZED)
 
 aux_source_directory(src SOURCE)
 add_executable(${PROJECT_NAME} ${SOURCE})

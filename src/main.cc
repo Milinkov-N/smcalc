@@ -1,13 +1,23 @@
 #include <iostream>
 
 #include "args.h"
+#include "lexer.h"
+
+size_t bytes_allocated = 0;
 
 constexpr auto USAGE_MSG = R"(Usage: smcalc  <expression> [OPTIONS...]
 
     OPTIONS:
-        --var       Sets variable for usage in expression (format:
-                    <name>:<value>)
+        --var string        Sets variable for usage in expression (format:
+                            <name>:<value>)
+        -B, --show-bytes    Shows how many bytes program is used
+        -T, --show-tokens   Shows raw, unparsed tokens
 )";
+
+void* operator new(size_t size) {
+  bytes_allocated += size;
+  return malloc(size);
+}
 
 auto main(int argc, char* argv[]) -> int {
   if (argc < 2) {
@@ -19,6 +29,13 @@ auto main(int argc, char* argv[]) -> int {
 
   auto vars = args.find_all_variables();
 
+  Lexer l(args.expr());
+
+  if (args.find_flag("-T").first || args.find_flag("--show-tokens").first) {
+    std::cout << "raw tokens:\n";
+    utils::tokens_dbg(l.collect());
+  }
+
   try {
     auto parsed = utils::parse_variables(vars);
 
@@ -29,6 +46,7 @@ auto main(int argc, char* argv[]) -> int {
     return 1;
   }
 
-  //   std::cout << name << " = " << value << std::endl;
+  if (args.find_flag("-B").first || args.find_flag("--show-bytes").first)
+    std::cout << "\n\n\nBytes used: " << bytes_allocated << std::endl;
   return 0;
 }

@@ -40,6 +40,8 @@ class Args {
   Args(int argc, char* argv[]);
   ~Args();
 
+  const std::string_view& expr() const { return m_expr; }
+
   std::pair<bool, int> find_flag(std::string_view flag) const;
 
   alias::raw_vars find_all_variables() const;

@@ -33,6 +33,8 @@ alias::tokens rpn::parse(const alias::tokens& tokens) {
       _handle_close_brace(ca, tx);
     else if (t.is_operator())
       _handle_operator(ca, tx, t);
+    else if (t.kind() == Token::Kind::Whitespace)
+      continue;
     else {
       // FIXME: created separate function
       // for this

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <map>
 #include <ostream>
 #include <string>
 #include <string_view>
@@ -8,7 +9,7 @@
 
 namespace alias {
 using raw_vars = std::vector<std::string_view>;
-using parsed_vars = std::vector<std::pair<std::string_view, double>>;
+using parsed_vars = std::map<std::string_view, double>;
 }  // namespace alias
 
 class Arg {

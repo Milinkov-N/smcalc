@@ -81,7 +81,7 @@ alias::parsed_vars utils::parse_variables(const alias::raw_vars& vars) {
     auto name = var.substr(0, sep);
     auto value = var.substr(sep + 1);
 
-    parsed_vars.emplace_back(name, std::atof(value.data()));
+    parsed_vars.emplace(name, std::atof(value.data()));
   }
 
   return parsed_vars;

@@ -1,4 +1,5 @@
 #include <iostream>
+#include <map>
 
 #include "args.h"
 #include "lexer.h"
@@ -45,6 +46,8 @@ auto main(int argc, char* argv[]) -> int {
     std::cout << "Variables:\n";
     for (auto& v : parsed_vars)
       std::cout << "  " << v.first << " = " << v.second << std::endl;
+
+    std::cout << "Result: " << rpn::evaluate(rpn, parsed_vars) << std::endl;
   } catch (std::logic_error& e) {
     std::cerr << e.what() << std::endl;
     return 1;

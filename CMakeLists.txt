@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.26)
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 
-project(smcalc)
+project(smcalc VERSION 0.1)
 
 ### Uncomment to see how much more memory getting used
 ### without utilizing string_view

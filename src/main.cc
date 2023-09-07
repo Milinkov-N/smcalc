@@ -43,10 +43,6 @@ auto main(int argc, char* argv[]) -> int {
     if (args.find_flag("-R").first || args.find_flag("--show-rpn").first)
       utils::tokens_dbg(rpn, "Parsed Tokens");
 
-    std::cout << "Variables:\n";
-    for (auto& v : parsed_vars)
-      std::cout << "  " << v.first << " = " << v.second << std::endl;
-
     std::cout << "Result: " << rpn::evaluate(rpn, parsed_vars) << std::endl;
   } catch (std::logic_error& e) {
     std::cerr << e.what() << std::endl;

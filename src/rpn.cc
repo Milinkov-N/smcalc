@@ -39,7 +39,7 @@ alias::tokens rpn::parse(const alias::tokens& tokens) {
       // FIXME: created separate function
       // for this
       std::stringstream ss;
-      ss << "smcalc: invalid token found '" << t.val() << "'";
+      ss << "smcalc: invalid token found '" << t << "'";
       throw std::logic_error(ss.str());
     }
   }
@@ -115,7 +115,7 @@ double rpn::evaluate(const alias::tokens& rpn,
         std::stringstream ss;
         ss << "smcalc: invalid token "
               "found '"
-           << tok.val() << "'";
+           << tok << "'";
         throw std::logic_error(ss.str());
         break;
     }

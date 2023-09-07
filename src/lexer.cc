@@ -15,6 +15,14 @@ Token::Token(Kind kind, std::string_view value)
 
 Token::~Token() {}
 
+bool Token::operator==(const Token& other) const {
+  return m_kind == other.m_kind && m_value == other.m_value;
+}
+
+bool Token::operator!=(const Token& other) const {
+  return m_kind != other.m_kind || m_value != other.m_value;
+}
+
 bool Token::is_operator() const {
   return m_kind == Kind::Negate || m_kind == Kind::PlusOp ||
          m_kind == Kind::MinusOp || m_kind == Kind::MulOp ||
@@ -136,7 +144,8 @@ Token Lexer::_operator() {
     }
     case '-': {
       auto& prev = m_prev;
-      if (prev.kind() == Token::Kind::StartStream || prev.is_operator())
+      if (prev.kind() == Token::Kind::StartStream ||
+          (prev.is_operator() && !prev.is_close_brace()))
         return Token(Token::Kind::Negate);
       return Token(Token::Kind::MinusOp);
     }

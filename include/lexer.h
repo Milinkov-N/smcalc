@@ -51,6 +51,8 @@ class Token {
  public:
   Token& operator=(const Token& t) = default;
   Token& operator=(Token&& t) noexcept = default;
+  bool operator==(const Token& other) const;
+  bool operator!=(const Token& other) const;
 
  public:
   Kind kind() const { return m_kind; }

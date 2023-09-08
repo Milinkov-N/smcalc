@@ -37,13 +37,7 @@ class Token {
  public:
   Token();
   Token(Kind kind);
-
-#ifdef _UNOPTIMIZED
-  Token::Token(Kind kind, std::string value) : m_kind(kind), m_value(value) {}
-#else
   Token(Kind kind, std::string_view value);
-#endif
-
   Token(const Token& t) = default;
   Token(Token&& t) noexcept = default;
   ~Token();
@@ -61,23 +55,13 @@ class Token {
   bool is_open_brace() const { return m_kind == Token::Kind::OpenBrace; }
   bool is_close_brace() const { return m_kind == Token::Kind::CloseBrace; }
   bool is_ident() const { return m_kind == Token::Kind::Ident; }
-
-#ifdef _UNOPTIMIZED
-  const std::string_view val() const { return m_value; }
-#else
   const std::string_view& val() const { return m_value; }
-#endif
 
   const char* to_cstr() const;
 
  private:
   Kind m_kind;
-
-#ifdef _UNOPTIMIZED
-  std::string m_value;
-#else
   std::string_view m_value;
-#endif
 };
 
 std::ostream& operator<<(std::ostream& s, const Token& t);

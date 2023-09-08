@@ -8,10 +8,8 @@ Token::Token() : m_kind(Token::Kind::Invalid), m_value("") {}
 
 Token::Token(Kind kind) : m_kind(kind), m_value("") {}
 
-#ifndef _UNOPTIMIZED
 Token::Token(Kind kind, std::string_view value)
     : m_kind(kind), m_value(value) {}
-#endif
 
 Token::~Token() {}
 
@@ -119,19 +117,11 @@ alias::tokens Lexer::collect() {
 
 // FIXME: better number lexing
 Token Lexer::_digit() {
-#ifdef _UNOPTIMIZED
-  std::string buf;
-  while (m_it != m_end && strchr("1234567890.", *m_it) != nullptr)
-    buf.push_back(*(m_it++));
-
-  return Token(Token::Kind::Number, buf);
-#else
   std::size_t n = 0;
   auto start = m_it;
   for (; m_it != m_end && strchr("1234567890.", *m_it) != nullptr; ++m_it, ++n)
     ;
   return Token(Token::Kind::Number, {start._Unwrapped(), n});
-#endif
 }
 
 Token Lexer::_operator() {
@@ -167,17 +157,11 @@ Token Lexer::_operator() {
 }
 
 Token Lexer::_ident() {
-#ifdef _UNOPTIMIZED
-  std::string buf;
-  while (m_it != m_end && std::isalnum(*m_it)) buf.push_back(*(m_it++));
-  return Token(Token::Kind::Ident, buf);
-#else
   std::size_t n = 0;
   auto start = m_it;
   for (; m_it != m_end && std::isalnum(*m_it); ++m_it, ++n)
     ;
   return Token(Token::Kind::Ident, {start._Unwrapped(), n});
-#endif
 }
 
 void utils::tokens_dbg(alias::tokens& tokens, std::string_view name) {

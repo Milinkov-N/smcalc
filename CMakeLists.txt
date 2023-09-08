@@ -29,6 +29,7 @@ add_executable(
   tests/tests_main.cc
   src/lexer.cc
   src/rpn.cc
+  src/calc.cc
 )
 target_include_directories(${TEST_TARGET} PUBLIC
   ${CMAKE_CURRENT_SOURCE_DIR}/include

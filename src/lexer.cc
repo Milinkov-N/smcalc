@@ -67,7 +67,7 @@ const char* Token::to_cstr() const {
 }
 
 std::ostream& operator<<(std::ostream& s, const Token& t) {
-  s << "Token::" << t.to_cstr();
+  s << "Token" << t.to_cstr();
 
   switch (t.kind()) {
     case Token::Kind::Invalid:

@@ -11,6 +11,9 @@
 
 typedef double (*math_fn)(double);
 
+static void _handle_ident(alias::tokens& ca, alias::tokens& tx,
+                          const Token& curr);
+
 static void _handle_operator(alias::tokens& ca, alias::tokens& tx,
                              const Token& curr);
 
@@ -27,7 +30,9 @@ alias::tokens rpn::parse(const alias::tokens& tokens) {
   for (auto& t : tokens) {
     if (t.is_number())
       ca.push_back(t);
-    else if (t.is_open_brace() || t.is_ident())
+    else if (t.is_ident())
+      _handle_ident(ca, tx, t);
+    else if (t.is_open_brace())
       tx.push_back(t);
     else if (t.is_close_brace())
       _handle_close_brace(ca, tx);
@@ -62,6 +67,16 @@ double rpn::evaluate(const alias::tokens& rpn,
         stack.push_back(std::atof(tok.val().data()));
         break;
 
+      case Token::Kind::Variable: {
+        if (vars.contains(tok.val())) {
+          stack.push_back(vars.at(tok.val()));
+        } else {
+          std::stringstream ss;
+          ss << "smcalc: unknown variable name '" << tok.val() << "'";
+          throw std::logic_error(ss.str());
+        }
+      } break;
+
       case Token::Kind::PlusOp:
         APPLY_OP(stack, lhs + rhs);
         break;
@@ -87,15 +102,16 @@ double rpn::evaluate(const alias::tokens& rpn,
         break;
 
       case Token::Kind::Negate: {
-        if (stack.size() < 1)
+        if (stack.size() < 1) {
           throw std::invalid_argument(
               "smcalc: Parsing Error "
               "(Stack Underflow)");
+        }
         auto& val = stack.back();
         val = -val;
       } break;
 
-      case Token::Kind::Ident: {
+      case Token::Kind::Function: {
         auto fn_ptr = _get_math_fn_ptr(tok.val());
 
         if (fn_ptr != nullptr) {
@@ -105,10 +121,11 @@ double rpn::evaluate(const alias::tokens& rpn,
                 "(Stack Underflow)");
           double& val = stack.back();
           val = fn_ptr(val);
-        } else if (vars.contains(tok.val())) {
-          stack.push_back(vars.at(tok.val()));
+        } else {
+          std::stringstream ss;
+          ss << "smcalc: invalid function name '" << tok.val() << "'";
+          throw std::logic_error(ss.str());
         }
-
       } break;
 
       default:
@@ -124,6 +141,14 @@ double rpn::evaluate(const alias::tokens& rpn,
   return stack.back();
 }
 
+static void _handle_ident(alias::tokens& ca, alias::tokens& tx,
+                          const Token& curr) {
+  if (_get_math_fn_ptr(curr.val()) != nullptr)
+    tx.emplace_back(Token::Kind::Function, curr.val());
+  else
+    ca.emplace_back(Token::Kind::Variable, curr.val());
+}
+
 static void _handle_operator(alias::tokens& ca, alias::tokens& tx,
                              const Token& curr) {
   if (tx.size() != 0) {
@@ -131,6 +156,12 @@ static void _handle_operator(alias::tokens& ca, alias::tokens& tx,
     if (tx_back.kind() >= curr.kind()) {
       ca.push_back(tx_back);
       tx.pop_back();
+
+      if (tx_back.kind() == Token::Kind::Function && tx.size() > 0 &&
+          tx.back() == Token::Kind::Negate) {
+        ca.push_back(tx.back());
+        tx.pop_back();
+      }
     }
   }
   tx.push_back(curr);

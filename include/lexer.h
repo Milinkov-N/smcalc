@@ -22,6 +22,7 @@ class Token {
     Invalid,
     Whitespace,
     Number,
+    Variable,
     OpenBrace,
     CloseBrace,
     PlusOp,
@@ -31,6 +32,7 @@ class Token {
     ModuloOp,
     ExpOp,
     Negate,
+    Function,
     Ident,
   };
 

@@ -7,7 +7,7 @@
 
 class Calculator {
  public:
-  Calculator(std::string_view expr, alias::parsed_vars&& vars);
+  Calculator(std::string_view expr, alias::parsed_vars&& vars = {});
 
   double eval();
 

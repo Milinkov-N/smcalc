@@ -25,8 +25,7 @@ bool Token::is_operator() const {
   return m_kind == Kind::Negate || m_kind == Kind::PlusOp ||
          m_kind == Kind::MinusOp || m_kind == Kind::MulOp ||
          m_kind == Kind::DivideOp || m_kind == Kind::ModuloOp ||
-         m_kind == Kind::ExpOp || m_kind == Kind::OpenBrace ||
-         m_kind == Kind::CloseBrace;
+         m_kind == Kind::ExpOp;
 }
 
 const char* Token::to_cstr() const {
@@ -67,7 +66,7 @@ const char* Token::to_cstr() const {
 }
 
 std::ostream& operator<<(std::ostream& s, const Token& t) {
-  s << "Token" << t.to_cstr();
+  s << "Token::" << t.to_cstr();
 
   switch (t.kind()) {
     case Token::Kind::Invalid:
@@ -119,8 +118,12 @@ alias::tokens Lexer::collect() {
 Token Lexer::_digit() {
   std::size_t n = 0;
   auto start = m_it;
+  bool have_dec_point = false;
   for (; m_it != m_end && strchr("1234567890.", *m_it) != nullptr; ++m_it, ++n)
-    ;
+    if (*m_it == '.' && !have_dec_point)
+      have_dec_point = true;
+    else if (*m_it == '.' && have_dec_point)
+      break;
   return Token(Token::Kind::Number, {start._Unwrapped(), n});
 }
 
@@ -135,7 +138,8 @@ Token Lexer::_operator() {
     case '-': {
       auto& prev = m_prev;
       if (prev.kind() == Token::Kind::StartStream ||
-          (prev.is_operator() && !prev.is_close_brace()))
+          ((prev.is_operator() || prev.is_open_brace()) &&
+           !prev.is_close_brace()))
         return Token(Token::Kind::Negate);
       return Token(Token::Kind::MinusOp);
     }

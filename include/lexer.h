@@ -4,10 +4,6 @@
 #include <string_view>
 #include <vector>
 
-#ifdef _UNOPTIMIZED
-#include <string>
-#endif
-
 class Token;
 
 namespace alias {

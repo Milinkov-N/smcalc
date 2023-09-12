@@ -25,7 +25,8 @@ auto main(int argc, char* argv[]) -> int {
   Calculator calc(args.expr(), std::move(parsed));
 
   try {
-    std::cout << "Result: " << calc.eval() << std::endl;
+    auto res = calc.eval();
+    std::cout << "Result: " << res << std::endl;
   } catch (std::logic_error& e) {
     std::cerr << e.what() << std::endl;
     return 1;

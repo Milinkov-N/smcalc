@@ -104,7 +104,7 @@ double rpn::evaluate(const alias::tokens& rpn,
       case Token::Kind::Negate: {
         if (stack.size() < 1) {
           throw std::invalid_argument(
-              "smcalc: Parsing Error "
+              "smcalc: cannot apply negation "
               "(Stack Underflow)");
         }
         auto& val = stack.back();
@@ -117,7 +117,7 @@ double rpn::evaluate(const alias::tokens& rpn,
         if (fn_ptr != nullptr) {
           if (stack.size() < 1)
             throw std::invalid_argument(
-                "smcalc: Parsing Error "
+                "smcalc: cannot evaluate function call "
                 "(Stack Underflow)");
           double& val = stack.back();
           val = fn_ptr(val);
@@ -182,7 +182,7 @@ static double _apply_operator(std::vector<double>& stack,
                               std::function<double(double, double)> cb) {
   if (stack.size() < 2)
     throw std::invalid_argument(
-        "smcalc: Parsing Error (Stack "
+        "smcalc: cannot apply operator (Stack "
         "Underflow)");
   double rhs = stack.back();
   stack.pop_back();

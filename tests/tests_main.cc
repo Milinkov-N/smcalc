@@ -1,5 +1,7 @@
 #include <gtest/gtest.h>
 
+#include <exception>
+
 #include "calc.h"
 
 TEST(Calculator, JustANumber) {
@@ -52,6 +54,11 @@ TEST(Calculator, Float) {
   ASSERT_EQ(calc.eval(), 1.2345);
 }
 
+TEST(Calculator, InvalidFloat) {
+  Calculator calc("1.2345.3");
+  EXPECT_THROW(calc.eval(), std::logic_error);
+}
+
 TEST(Calculator, FnSin) {
   Calculator calc("sin(3.14)");
   ASSERT_EQ(calc.eval(), sin(3.14));
@@ -100,6 +107,13 @@ TEST(Calculator, FnLog) {
 TEST(Calculator, Variable) {
   Calculator calc("x", {{"x", 3.14}});
   ASSERT_EQ(calc.eval(), 3.14);
+}
+
+TEST(Calculator, CosOnePlusTwo) {
+    Calculator calc("cos(1) + 2");
+
+    double expected = cos(1) + 2;
+    ASSERT_EQ(calc.eval(), expected);
 }
 
 TEST(Calculator, ComplexExpression01) {

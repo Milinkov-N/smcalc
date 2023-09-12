@@ -1,11 +1,11 @@
 cmake_minimum_required(VERSION 3.20)
 set(CMAKE_CXX_STANDARD 20)
 
-project(smcalc VERSION 0.1)
-
-### Uncomment to see how much more memory getting used
-### without utilizing string_view
-# add_compile_definitions(_UNOPTIMIZED)
+project(
+  smcalc
+  VERSION 0.1
+  LANGUAGES CXX
+)
 
 aux_source_directory(src SOURCE)
 add_executable(${PROJECT_NAME} ${SOURCE})
@@ -23,6 +23,7 @@ set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
 enable_testing()
+
 set(TEST_TARGET smcalc_tests)
 add_executable(
   ${TEST_TARGET}
